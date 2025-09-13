@@ -88,7 +88,8 @@
     .tweet-button {
         display: none;
         padding: 8px 16px;
-        background-color: #1DA1F2;
+        /* ボタンの色を黒に変更 */
+        background-color: #333333; 
         color: white;
         text-decoration: none;
         border-radius: 20px;
@@ -104,10 +105,10 @@
 <div class="controls">
     <div id="result-display"></div>
     <div id="tweet-area">
-        <a href="#" id="tweet-10" class="tweet-button" target="_blank">クリアをツイート (10)</a>
-        <a href="#" id="tweet-100" class="tweet-button" target="_blank">クリアをツイート (100)</a>
-        <a href="#" id="tweet-1000" class="tweet-button" target="_blank">クリアをツイート (1,000)</a>
-        <a href="#" id="tweet-100000" class="tweet-button" target="_blank">クリアをツイート (100,000)</a>
+        <a href="#" id="tweet-10" class="tweet-button" target="_blank">クリアをポスト</a>
+        <a href="#" id="tweet-100" class="tweet-button" target="_blank">クリアをポスト</a>
+        <a href="#" id="tweet-1000" class="tweet-button" target="_blank">クリアをポスト</a>
+        <a href="#" id="tweet-100000" class="tweet-button" target="_blank">クリアをポスト</a>
     </div>
 </div>
 
@@ -197,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupTweetLinks() {
-        const base_url = "https://twitter.com/intent/tweet";
+        const base_url = "https://twitter.com/intent/post";
         const gameURL = "https://t0dor0ki.github.io/9D6/";
         const hashtags = "Web謎,9D6";
 
