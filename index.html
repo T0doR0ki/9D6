@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function calculateTotal() {
-        let total = BigInt(0); // BigIntを使用して非常に大きな数値を扱う
+        let total = BigInt(0);
         for (let i = 0; i < DICE_COUNT; i++) {
             const diceNumber = BigInt(i + 1);
             const faceValue = BigInt(sequence[diceStates[i].sequenceIndex]);
@@ -177,13 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateTotal() {
         const currentTotal = calculateTotal();
-        // BigIntはtoLocaleString()に直接対応していない場合があるので、toString()を挟む
         resultDisplay.textContent = Number(currentTotal).toLocaleString();
         updateDisplay(currentTotal);
     }
     
     function updateDisplay(total) {
-        const totalNum = Number(total); // 比較のためにNumber型に変換
+        const totalNum = Number(total);
         if (totalNum > 0 && Math.log10(totalNum) % 1 === 0) {
             resultDisplay.style.color = "red";
         } else {
@@ -197,12 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ▼▼▼ ツイート文面を指定のものに修正しました ▼▼▼
     function setupTweetLinks() {
         const base_url = "https://twitter.com/intent/tweet";
-        const hashtags = "9D6"; // ハッシュタグもタイトルに合わせる
+        const gameURL = "https://t0dor0ki.github.io/9D6/";
+        const hashtags = "Web謎,9D6";
 
-        // 各クリア条件に対応するツイート文
         const tweetTexts = {
             10: "9D6がなんとなくわかった！",
             100: "9D6がある程度理解できた！",
@@ -212,13 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const num in tweetButtons) {
             const customText = tweetTexts[num];
-            const text = encodeURIComponent(customText);
+            const text = encodeURIComponent(customText + " " + gameURL);
             const url = `${base_url}?text=${text}&hashtags=${hashtags}`;
             tweetButtons[num].href = url;
         }
     }
 
-    // 初期化
     setupTweetLinks();
     updateTotal();
 });
