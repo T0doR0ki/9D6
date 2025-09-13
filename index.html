@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9D6</title>
+<style>
+    body {
+        font-family: sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #ffffff;
+        flex-direction: column;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 120px);
+        grid-template-rows: repeat(3, 120px);
+        gap: 40px;
+        margin-bottom: 20px;
+    }
+    .scene {
+        width: 100px;
+        height: 100px;
+        perspective: 600px;
+    }
+    .dice {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d; 
+        transform: translateZ(-50px);
+        transition: transform 0.6s;
+        cursor: pointer;
+    }
+    .face {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: #fff;
+        border: 2px solid #333;
+        border-radius: 10px;
+        display: grid;
+        padding: 10px;
+        box-sizing: border-box;
+        backface-visibility: hidden;
+    }
+    .dot {
+        width: 24px;
+        height: 24px;
+        background-color: #333;
+        border-radius: 50%;
+        align-self: center;
+        justify-self: center;
+    }
+    .face-1 .dot {
+        background-color: #b71c1c;
+    }
+    .face-1 { grid-template-areas: ". . ." ". a ." ". . ."; }
+    .face-2 { grid-template-areas: "a . ." ". . ." ". . b"; }
+    .face-3 { grid-template-areas: "a . ." ". b ." ". . c"; }
+    .face-4 { grid-template-areas: "a . b" ". . ." "c . d"; }
+    .face-5 { grid-template-areas: "a . b" ". c ." "d . e"; }
+    .face-6 { grid-template-areas: "a . b" "c . d" "e . f"; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;}
+    .dot-a { grid-area: a; } .dot-b { grid-area: b; } .dot-c { grid-area: c; }
+    .dot-d { grid-area: d; } .dot-e { grid-area: e; } .dot-f { grid-area: f; }
+    
+    .front  { transform: rotateY(  0deg) translateZ(50px); }
+    .top    { transform: rotateX( 90deg) translateZ(50px); }
+    .left   { transform: rotateY(-90deg) translateZ(50px); }
+    .right  { transform: rotateY( 90deg) translateZ(50px); }
+    .bottom { transform: rotateX(-90deg) translateZ(50px); }
+    .back   { transform: rotateY(180deg) translateZ(50px); }
+
+    .controls {
+        text-align: center;
+        height: 80px;
+    }
+    #result-display {
+        font-size: 2.5em;
+        font-weight: bold;
+        height: 50px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    .tweet-button {
+        display: none;
+        padding: 8px 16px;
+        background-color: #1DA1F2;
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div class="grid-container" id="dice-grid">
+</div>
+
+<div class="controls">
+    <div id="result-display"></div>
+    <div id="tweet-area">
+        <a href="#" id="tweet-10" class="tweet-button" target="_blank">クリアをツイート</a>
+        <a href="#" id="tweet-100" class="tweet-button" target="_blank">クリアをツイート</a>
+        <a href="#" id="tweet-1000" class="tweet-button" target="_blank">クリアをツイート</a>
+        <a href="#" id="tweet-100000" class="tweet-button" target="_blank">クリアをツイート</a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const gridContainer = document.getElementById('dice-grid');
+    const resultDisplay = document.getElementById('result-display');
+    const tweetButtons = {
+        10: document.getElementById('tweet-10'),
+        100: document.getElementById('tweet-100'),
+        1000: document.getElementById('tweet-1000'),
+        100000: document.getElementById('tweet-100000')
+    };
+    const DICE_COUNT = 9;
+
+    const rotations = {
+        1: 'rotateY(0deg)', 2: 'rotateX(-90deg)', 3: 'rotateY(90deg)',
+        4: 'rotateY(-90deg)', 5: 'rotateX(90deg)', 6: 'rotateY(180deg)'
+    };
+    
+    const sequence = [1, 2, 3, 4, 5, 6];
+    let diceStates = [];
+
+    function createDiceHTML() {
+        return `
+            <div class="scene">
+                <div class="dice">
+                    <div class="face front face-1"><span class="dot dot-a"></span></div>
+                    <div class="face top face-2"><span class="dot dot-a"></span><span class="dot dot-b"></span></div>
+                    <div class="face left face-3"><span class="dot dot-a"></span><span class="dot dot-b"></span><span class="dot dot-c"></span></div>
+                    <div class="face right face-4"><span class="dot dot-a"></span><span class="dot dot-b"></span><span class="dot dot-c"></span><span class="dot dot-d"></span></div>
+                    <div class="face bottom face-5"><span class="dot dot-a"></span><span class="dot dot-b"></span><span class="dot dot-c"></span><span class="dot dot-d"></span><span class="dot dot-e"></span></div>
+                    <div class="face back face-6"><span class="dot dot-a"></span><span class="dot dot-b"></span><span class="dot dot-c"></span><span class="dot dot-d"></span><span class="dot dot-e"></span><span class="dot dot-f"></span></div>
+                </div>
+            </div>
+        `;
+    }
+
+    for (let i = 0; i < DICE_COUNT; i++) {
+        gridContainer.innerHTML += createDiceHTML();
+        diceStates.push({ sequenceIndex: 0 });
+    }
+
+    const diceElements = document.querySelectorAll('.dice');
+
+    diceElements.forEach((dice, index) => {
+        dice.style.transform = `translateZ(-50px) ${rotations[1]}`;
+        
+        dice.addEventListener('click', () => {
+            const state = diceStates[index];
+            state.sequenceIndex = (state.sequenceIndex + 1) % sequence.length;
+            const currentFace = sequence[state.sequenceIndex];
+            dice.style.transform = `translateZ(-50px) ${rotations[currentFace]}`;
+            updateTotal();
+        });
+    });
+
+    function calculateTotal() {
+        let total = BigInt(0); 
+        for (let i = 0; i < DICE_COUNT; i++) {
+            const diceNumber = BigInt(i + 1);
+            const faceValue = BigInt(sequence[diceStates[i].sequenceIndex]);
+            total += faceValue ** diceNumber;
+        }
+        return total;
+    }
+    
+    function updateTotal() {
+        const currentTotal = calculateTotal();
+        resultDisplay.textContent = Number(currentTotal).toLocaleString();
+        updateDisplay(currentTotal);
+    }
+    
+    function updateDisplay(total) {
+        const totalNum = Number(total); 
+        if (totalNum > 0 && Math.log10(totalNum) % 1 === 0) {
+            resultDisplay.style.color = "red";
+        } else {
+            resultDisplay.style.color = '#333';
+        }
+
+        Object.values(tweetButtons).forEach(button => button.style.display = 'none');
+        
+        if (tweetButtons[totalNum]) {
+            tweetButtons[totalNum].style.display = 'inline-block';
+        }
+    }
+
+    function setupTweetLinks() {
+        const base_url = "https://twitter.com/intent/tweet";
+        const hashtags = "Web謎","9D6"; 
+
+        const tweetTexts = {
+            10: "9D6がなんとなくわかった！",
+            100: "9D6がある程度理解できた！",
+            1000: "9D6がかなり理解できた！",
+            100000: "9D6が完璧に理解できた！！！"
+        };
+
+        for (const num in tweetButtons) {
+            const customText = tweetTexts[num];
+            const text = encodeURIComponent(customText);
+            const url = `${base_url}?text=${text}&hashtags=${hashtags}`;
+            tweetButtons[num].href = url;
+        }
+    }
+
+    setupTweetLinks();
+    updateTotal();
+});
+</script>
+
+</body>
+</html>
