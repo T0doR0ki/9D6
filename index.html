@@ -104,10 +104,10 @@
 <div class="controls">
     <div id="result-display"></div>
     <div id="tweet-area">
-        <a href="#" id="tweet-10" class="tweet-button" target="_blank">クリアをツイート</a>
-        <a href="#" id="tweet-100" class="tweet-button" target="_blank">クリアをツイート</a>
-        <a href="#" id="tweet-1000" class="tweet-button" target="_blank">クリアをツイート</a>
-        <a href="#" id="tweet-100000" class="tweet-button" target="_blank">クリアをツイート</a>
+        <a href="#" id="tweet-10" class="tweet-button" target="_blank">クリアをツイート (10)</a>
+        <a href="#" id="tweet-100" class="tweet-button" target="_blank">クリアをツイート (100)</a>
+        <a href="#" id="tweet-1000" class="tweet-button" target="_blank">クリアをツイート (1,000)</a>
+        <a href="#" id="tweet-100000" class="tweet-button" target="_blank">クリアをツイート (100,000)</a>
     </div>
 </div>
 
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function calculateTotal() {
-        let total = BigInt(0); 
+        let total = BigInt(0); // BigIntを使用して非常に大きな数値を扱う
         for (let i = 0; i < DICE_COUNT; i++) {
             const diceNumber = BigInt(i + 1);
             const faceValue = BigInt(sequence[diceStates[i].sequenceIndex]);
@@ -177,12 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateTotal() {
         const currentTotal = calculateTotal();
+        // BigIntはtoLocaleString()に直接対応していない場合があるので、toString()を挟む
         resultDisplay.textContent = Number(currentTotal).toLocaleString();
         updateDisplay(currentTotal);
     }
     
     function updateDisplay(total) {
-        const totalNum = Number(total); 
+        const totalNum = Number(total); // 比較のためにNumber型に変換
         if (totalNum > 0 && Math.log10(totalNum) % 1 === 0) {
             resultDisplay.style.color = "red";
         } else {
@@ -196,10 +197,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ▼▼▼ ツイート文面を指定のものに修正しました ▼▼▼
     function setupTweetLinks() {
         const base_url = "https://twitter.com/intent/tweet";
-        const hashtags = {"Web謎","9D6"}; 
+        const hashtags = "9D6"; // ハッシュタグもタイトルに合わせる
 
+        // 各クリア条件に対応するツイート文
         const tweetTexts = {
             10: "9D6がなんとなくわかった！",
             100: "9D6がある程度理解できた！",
@@ -215,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 初期化
     setupTweetLinks();
     updateTotal();
 });
