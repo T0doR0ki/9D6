@@ -12,14 +12,28 @@
         align-items: center;
         min-height: 100vh;
         background-color: #ffffff;
+        margin: 0;
+        padding: 20px 0;
+        box-sizing: border-box;
+    }
+    .main-container {
+        display: flex;
         flex-direction: column;
+        align-items: center;
+    }
+    .grid-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 20px;
+        position: relative;
+        left: 10px;
     }
     .grid-container {
         display: grid;
         grid-template-columns: repeat(3, 120px);
         grid-template-rows: repeat(3, 120px);
         gap: 40px;
-        margin-bottom: 20px;
     }
     .scene {
         width: 100px;
@@ -73,22 +87,22 @@
     .right  { transform: rotateY( 90deg) translateZ(50px); }
     .bottom { transform: rotateX(-90deg) translateZ(50px); }
     .back   { transform: rotateY(180deg) translateZ(50px); }
-
-    .controls {
-        text-align: center;
-        height: 80px;
-    }
+    
     #result-display {
         font-size: 2.5em;
         font-weight: bold;
         height: 50px;
         color: #333;
         margin-bottom: 10px;
+        text-align: center;
+    }
+    #tweet-area {
+        height: 40px;
+        text-align: center;
     }
     .tweet-button {
         display: none;
         padding: 8px 16px;
-        /* ボタンの色を黒に変更 */
         background-color: #333333; 
         color: white;
         text-decoration: none;
@@ -99,10 +113,12 @@
 </head>
 <body>
 
-<div class="grid-container" id="dice-grid">
-</div>
+<div class="main-container">
+    <div class="grid-wrapper">
+        <div class="grid-container" id="dice-grid">
+        </div>
+    </div>
 
-<div class="controls">
     <div id="result-display"></div>
     <div id="tweet-area">
         <a href="#" id="tweet-10" class="tweet-button" target="_blank">クリアをポスト</a>
